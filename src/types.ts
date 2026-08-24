@@ -1,6 +1,6 @@
 export type Category = "Produce" | "Dairy" | "Bakery" | "Grains & Flours" | "Pulses" | "Spices" | "Dry Fruits & Nuts" | "Cooking Essentials" | "Beverages" | "Snacks" | "Frozen" | "Household" | "Personal Care" | "Other Food" | "Other";
 export type Source = "voice" | "text" | "manual" | "suggestion";
-export type Product = { id:string; name:string; normalizedName:string; brand:string; category:Category; size:string; unit:string; price:number; inStock:boolean; tags:string[]; photoIndex:number; photoSheet?:number; aliases?:string[]; substituteIds?:string[]; seasonalMonths?:number[]; onSale?:boolean; originalPrice?:number };
+export type Product = { id:string; name:string; normalizedName:string; brand:string; category:Category; size:string; unit:string; price:number; inStock:boolean; tags:string[]; photoIndex:number; photoSheet?:number; aliases?:string[]; substituteIds?:string[]; seasonalMonths?:number[]; onSale?:boolean; originalPrice?:number; custom?:boolean };
 export type ShoppingItem = { id:string; productId?:string; name:string; normalizedName:string; brand?:string; category:Category; quantity:number; unit:string; size?:string; estimatedUnitPrice?:number; estimatedUnitPricePaise?:number; originalUnitPricePaise?:number; approximatePrice?:boolean; purchased:boolean; source:Source; createdAt:string; updatedAt:string };
 export type HistoryItem = Omit<ShoppingItem,"purchased"> & { purchasedAt:string };
 export type ParsedItem = { item:string; normalizedItem:string; productId?:string; quantity:number; unit:string; explicitQuantity:boolean };
@@ -8,4 +8,4 @@ export type Intent = "ADD_ITEM" | "REMOVE_QUANTITY" | "REMOVE_ALL" | "SET_QUANTI
 export type ParsedCommand = { intent:Intent; item?:string; normalizedItem?:string; productId?:string; items?:ParsedItem[]; quantity?:number; quantityExplicit?:boolean; unit?:string; brand?:string; size?:string; maxPrice?:number; minPrice?:number; attributes?:string[]; selectionIndex?:number; targetTab?:"list"|"search"|"history"; language?:string; normalizedTranscript?:string; confidence:number; needsConfirmation?:boolean; rawTranscript:string };
 export type Activity = { id:string; user:string; action:string; assistant:string; at:string; kind:"success"|"error"|"info" };
 export type AppData = { version:2; migrationVersion:2; list:ShoppingItem[]; history:HistoryItem[]; dismissed:string[]; activity:Activity[]; speechEnabled:boolean };
-export type Suggestion = { id:string; product:Product; title:string; reason:string; kind:"history"|"seasonal"|"sale"|"substitute" };
+export type Suggestion = { id:string; product:Product; title:string; reason:string; kind:"history"|"preference"|"seasonal"|"sale"|"substitute"; quantity?:number; unit?:string; score?:number; medianIntervalDays?:number };

@@ -86,7 +86,7 @@ Chromium-based browsers offer the best Speech Recognition support. Safari/Firefo
 - The catalog is deliberately small and offline; price and availability are illustrative.
 - The project has no configured AI service, so validated deterministic parsing and catalog ranking are the offline path; arbitrary phrasing outside the data-driven vocabulary may require confirmation or editing.
 - Browser speech recognition language quality and service availability vary by platform.
-- Repeat-purchase suggestions use a simple seven-day threshold after two purchases.
+- Repeat-purchase suggestions use the median purchase interval after two or more completed purchases and appear after 80% of that cadence has elapsed.
 
 ## Project structure
 
@@ -105,6 +105,6 @@ src/
 
 I built Piko as a static, local-first React application so the assessment’s core workflows remain usable without accounts, API keys, or a backend. Voice and typed commands share one deterministic TypeScript parser, preventing behavior drift and making multilingual intent handling directly testable. The parser preserves the original transcript, normalizes only internally, supports English/Hindi/Hinglish aliases and number words, and routes low-confidence input through an explicit confirmation step.
 
-Shopping list, history, dismissed suggestions, and preferences use versioned localStorage with corrupt-data fallback. Version 2 migrates any legacy Pantry products into the shopping list once, merging compatible duplicates without discarding quantities or price data. A bundled Indian grocery catalog powers product, brand, size, attribute, price, stock, sale, seasonality, and substitute behavior; the interface clearly labels those values as sample data. Suggestions are explainable rules based on repeat history, seasonal metadata, or explicit sale flags—never random or presented as AI.
+Shopping list, history, dismissed suggestions, and preferences use versioned localStorage with corrupt-data fallback. Version 2 migrates any legacy Pantry products into the shopping list once, merging compatible duplicates without discarding quantities or price data. A bundled Indian grocery catalog powers product, brand, size, attribute, price, stock, sale, seasonality, and substitute behavior; the interface clearly labels those values as sample data. Suggestions are explainable rules based on completed-purchase cadence, repeated brands/categories/tags, seasonal metadata, or explicit sale flags—never random or presented as AI.
 
 The UI is mobile-first and keyboard-accessible, with responsive navigation, large controls, visible focus, live status messaging, and reduced-motion support. Native Web Speech and Speech Synthesis APIs keep dependencies minimal, while the text path ensures the app still works when microphone permission or browser support is unavailable.
