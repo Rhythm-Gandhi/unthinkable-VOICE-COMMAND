@@ -90,6 +90,11 @@ describe("natural food recommendations",()=>{
 
 describe("quantities, units, and product extraction",()=>{
   it.each([["add half kilo sugar","sugar",.5,"kg"],["ek kilo shakkar add karo","sugar",1,"kg"],["do kilo bajra chahiye","bajra",2,"kg"],["add one and a half kilos of rice","rice",1.5,"kg"],["aadha kilo atta","atta",.5,"kg"],["dedh kilo atta","atta",1.5,"kg"]])("extracts %s",(text,item,quantity,unit)=>expect(parseCommand(String(text)).items?.[0]).toMatchObject({normalizedItem:item,quantity,unit}));
+  it.each([
+    ["Add 250 g almonds",250,"g"],["Add 1/2 kg apples",.5,"kg"],["Add ½ kg apples",.5,"kg"],["Add half kg atta",.5,"kg"],
+    ["Add 1.5 kg rice",1.5,"kg"],["Add one point five kg rice",1.5,"kg"],["Add kilo onions",1,"kg"],
+    ["Add half dozen eggs",.5,"dozen"],["Add 1 dozen eggs",1,"dozen"],["Add dozen eggs",1,"dozen"]
+  ])("understands practical measurement %s",(text,quantity,unit)=>expect(parseCommand(text)).toMatchObject({intent:"ADD_ITEM",quantity,unit}));
   it("splits lists without measurements in names",()=>expect(parseItems("add one kg onion one kg tomato one kg potato").map(x=>[x.normalizedItem,x.quantity,x.unit])).toEqual([["onion",1,"kg"],["tomato",1,"kg"],["potato",1,"kg"]]));
   it("preserves multi-word products",()=>expect(parseItems("add olive oil ice cream green tea").map(x=>x.normalizedItem)).toEqual(["olive oil","ice cream","green tea"]));
   it("drops conversational fillers",()=>expect(parseCommand("Umm can you please add you know two kilos of onions and maybe one milk").items?.map(x=>x.normalizedItem)).toEqual(["onion","milk"]));
@@ -129,8 +134,11 @@ describe.each(languageCases)("%s language parity",(_language,add,remove,quantity
 describe("existing domain and persistence behavior",()=>{
   it("categorizes and merges compatible items",()=>{expect(categorize("milk")).toBe("Dairy");const a=makeItem("milk",1,"l");expect(mergeItem([a],makeItem("milk",2,"l"))[0].quantity).toBe(3);expect(mergeItem([a],makeItem("milk",1,"packet"))).toHaveLength(2)});
   it("calculates paise subtotals",()=>{const onion={...makeItem("onion",2,"kg"),estimatedUnitPricePaise:4000};expect(itemSubtotalPaise(onion)).toBe(8000)});
-  it("marks fallback prices approximate",()=>expect(makeItem("dragon fruit")).toMatchObject({approximatePrice:true,estimatedUnitPricePaise:5000}));
+  it("derives approximate fallback prices from the catalog instead of a fixed ₹50",()=>{const item=makeItem("dragon fruit");expect(item.approximatePrice).toBe(true);expect(item.estimatedUnitPricePaise).toBeGreaterThan(0);expect(item.estimatedUnitPricePaise).not.toBe(5000)});
   it("prorates catalog packs to the requested measurement",()=>expect(makeItem("Atta",1,"kg","text",catalog.find(p=>p.id==="aashirvaad-atta")).estimatedUnitPricePaise).toBe(5700));
+  it("updates compatible cart measurements and prorates their market estimate",()=>{let list=mergeItem([],makeItem("Almonds",250,"g"));list=mergeItem(list,makeItem("Almonds",.5,"kg"));expect(list[0]).toMatchObject({quantity:750,unit:"g"});expect(itemSubtotalPaise(list[0])).toBe(Math.round(list[0].estimatedUnitPricePaise!*750))});
+  it("prices half a dozen eggs as six pieces",()=>{const eggs=makeItem("Eggs",.5,"dozen","text",catalog.find(p=>p.id==="farm-eggs"));expect(eggs.estimatedUnitPricePaise).toBe(14400);expect(itemSubtotalPaise(eggs)).toBe(7200)});
+  it("scales a generic food estimate with the requested quantity",()=>{const small=makeItem("Quinoa",250,"g"),large=makeItem("Quinoa",500,"g");expect(small.approximatePrice).toBe(true);expect(small.estimatedUnitPricePaise).toBeGreaterThan(0);expect(itemSubtotalPaise(large)).toBe(itemSubtotalPaise(small)*2)});
   it("recommends within constraints",()=>expect(recommendProducts(parseCommand("Recommend fruits under ₹200")).every(x=>x.price<=200&&x.tags.includes("fruit"))).toBe(true));
   it("builds history and seasonal suggestions",()=>{const h={...makeItem("bread"),purchasedAt:new Date().toISOString()} as HistoryItem;expect(suggestions({...defaultData,history:[h,{...h,id:crypto.randomUUID()}]}).some(x=>x.kind==="history")).toBe(true);expect(suggestions(defaultData,5).some(x=>x.kind==="seasonal")).toBe(true)});
   it("ranks in-stock substitutes",()=>expect(rankSubstitutes(catalog.find(p=>p.id==="mother-milk")!)[0].id).toBe("sofit-almond"));

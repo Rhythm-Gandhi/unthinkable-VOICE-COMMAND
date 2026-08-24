@@ -42,12 +42,12 @@ describe("speech recognition lifecycle",()=>{
   });
 
   it("shows interim text but only marks finalized recognition as processing",()=>{
-    const transcripts:Array<[string,boolean]>=[],states:string[]=[];
-    createRecognition("en-IN",{onState:s=>states.push(s),onTranscript:(text,final)=>transcripts.push([text,final]),onError:vi.fn()});
+    const transcripts:Array<[string,boolean]>=[],states:string[]=[],events:string[]=[];
+    createRecognition("en-IN",{onState:s=>{states.push(s);events.push(s)},onTranscript:(text,final)=>{transcripts.push([text,final]);events.push(final?"final":"interim")},onError:vi.fn()});
     FakeRecognition.latest.onstart?.();
     FakeRecognition.latest.onresult?.({resultIndex:0,results:{0:{0:{transcript:"add milk",confidence:.9},isFinal:false,length:1},length:1}} as never);
     FakeRecognition.latest.onresult?.({resultIndex:0,results:{0:{0:{transcript:"add milk",confidence:.9},isFinal:true,length:1},length:1}} as never);
-    expect(transcripts).toEqual([["add milk",false],["add milk",true]]);expect(states).toContain("processing");
+    expect(transcripts).toEqual([["add milk",false],["add milk",true]]);expect(states).toContain("processing");expect(events.indexOf("processing")).toBeLessThan(events.indexOf("final"));
   });
 
   it("reports an empty final result at the result boundary",()=>{
