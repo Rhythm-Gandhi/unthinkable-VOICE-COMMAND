@@ -41,12 +41,31 @@ Questions, searches, and recommendations never mutate the list automatically.
 ## Screenshots
 
 ### Main shopping interface
+<img width="720" height="1600" alt="image" src="https://github.com/user-attachments/assets/1e8227d9-5eb6-4a5a-ad39-0b36be4db4a6" />
 
-![Piko voice shopping interface](./docs/screenshots/piko-home.png)
 
 ### Command guide and voice-output preference
+<img width="720" height="1600" alt="image" src="https://github.com/user-attachments/assets/49ea0fa6-bd5d-46d5-bd6c-a4c42564fff1" />
 
-![Piko supported command guide](./docs/screenshots/piko-command-guide.png)
+### Languages Supported
+<img width="1080" height="2400" alt="image" src="https://github.com/user-attachments/assets/41daea0b-a292-49bf-b478-99085311d827" />
+
+### Shopping List
+<img width="720" height="1600" alt="image" src="https://github.com/user-attachments/assets/5a87e9f0-8bfe-4d82-963c-db8f7700434b" />
+
+### Smart Suggestions
+<img width="720" height="1600" alt="image" src="https://github.com/user-attachments/assets/7e77824b-5efe-4394-8502-faee79844cc0" />
+
+### Discover
+<img width="720" height="1600" alt="image" src="https://github.com/user-attachments/assets/03a80d23-340b-4c64-8767-0920b8167638" />
+
+### History & Activity
+<img width="720" height="1600" alt="image" src="https://github.com/user-attachments/assets/6ffe146a-3b43-4264-b884-8e4d08018d40" />
+
+
+
+
+
 
 ## Features
 
