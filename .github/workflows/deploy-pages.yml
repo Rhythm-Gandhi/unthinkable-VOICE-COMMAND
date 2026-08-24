@@ -1,4 +1,4 @@
-name: Deploy VoiceCart to GitHub Pages
+name: Deploy Piko to GitHub Pages
 
 on:
   push:

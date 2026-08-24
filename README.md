@@ -1,6 +1,6 @@
-# VoiceCart - Voice Command Shopping Assistant
+# Piko - Voice Command Shopping Assistant
 
-VoiceCart is a mobile-first, local-first shopping assistant for English, Hindi, and Hinglish commands. It combines real browser speech recognition with the same deterministic parser used by its text fallback. No audio is recorded and no backend is required.
+Piko is a mobile-first, local-first shopping assistant for English, Hindi, and Hinglish commands. It combines real browser speech recognition with the same deterministic parser used by its text fallback. No audio is recorded and no backend is required.
 
 **Live app:** [https://rhythm-gandhi.github.io/unthinkable-VOICE-COMMAND/](https://rhythm-gandhi.github.io/unthinkable-VOICE-COMMAND/)
 
@@ -79,7 +79,7 @@ Pushes to `main` run the official GitHub Pages workflow in `.github/workflows/de
 
 ## Browser compatibility and privacy
 
-Chromium-based browsers offer the best Speech Recognition support. Safari/Firefox support varies; the complete text-command path remains available. The Web Speech API cannot reliably identify an unknown spoken language before transcription: **Auto detect** starts recognition with the browser/device locale, then performs transcript-level language detection and multilingual normalization. For better recognition, select the intended language locale explicitly. Recognition may use the browser vendor’s speech service. VoiceCart does not store audio. Lists, history, preferences, and a short recent transcript log remain only in this browser’s `localStorage` until cleared.
+Chromium-based browsers offer the best Speech Recognition support. Safari/Firefox support varies; the complete text-command path remains available. The Web Speech API cannot reliably identify an unknown spoken language before transcription: **Auto detect** starts recognition with the browser/device locale, then performs transcript-level language detection and multilingual normalization. For better recognition, select the intended language locale explicitly. Recognition may use the browser vendor’s speech service. Piko does not store audio. Lists, history, preferences, and a short recent transcript log remain only in this browser’s `localStorage` until cleared.
 
 ## Known limitations
 
@@ -103,7 +103,7 @@ src/
 
 ## Submission approach (under 200 words)
 
-I built VoiceCart as a static, local-first React application so the assessment’s core workflows remain usable without accounts, API keys, or a backend. Voice and typed commands share one deterministic TypeScript parser, preventing behavior drift and making multilingual intent handling directly testable. The parser preserves the original transcript, normalizes only internally, supports English/Hindi/Hinglish aliases and number words, and routes low-confidence input through an explicit confirmation step.
+I built Piko as a static, local-first React application so the assessment’s core workflows remain usable without accounts, API keys, or a backend. Voice and typed commands share one deterministic TypeScript parser, preventing behavior drift and making multilingual intent handling directly testable. The parser preserves the original transcript, normalizes only internally, supports English/Hindi/Hinglish aliases and number words, and routes low-confidence input through an explicit confirmation step.
 
 Shopping list, history, dismissed suggestions, and preferences use versioned localStorage with corrupt-data fallback. Version 2 migrates any legacy Pantry products into the shopping list once, merging compatible duplicates without discarding quantities or price data. A bundled Indian grocery catalog powers product, brand, size, attribute, price, stock, sale, seasonality, and substitute behavior; the interface clearly labels those values as sample data. Suggestions are explainable rules based on repeat history, seasonal metadata, or explicit sale flags—never random or presented as AI.
 

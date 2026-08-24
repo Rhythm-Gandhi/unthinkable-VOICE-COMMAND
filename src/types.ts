@@ -1,6 +1,6 @@
-export type Category = "Produce" | "Dairy" | "Bakery" | "Grains & Flours" | "Pulses" | "Spices" | "Cooking Essentials" | "Beverages" | "Snacks" | "Frozen" | "Household" | "Personal Care" | "Other";
+export type Category = "Produce" | "Dairy" | "Bakery" | "Grains & Flours" | "Pulses" | "Spices" | "Dry Fruits & Nuts" | "Cooking Essentials" | "Beverages" | "Snacks" | "Frozen" | "Household" | "Personal Care" | "Other Food" | "Other";
 export type Source = "voice" | "text" | "manual" | "suggestion";
-export type Product = { id:string; name:string; normalizedName:string; brand:string; category:Category; size:string; unit:string; price:number; inStock:boolean; tags:string[]; photoIndex:number; substituteIds?:string[]; seasonalMonths?:number[]; onSale?:boolean; originalPrice?:number };
+export type Product = { id:string; name:string; normalizedName:string; brand:string; category:Category; size:string; unit:string; price:number; inStock:boolean; tags:string[]; photoIndex:number; photoSheet?:number; aliases?:string[]; substituteIds?:string[]; seasonalMonths?:number[]; onSale?:boolean; originalPrice?:number };
 export type ShoppingItem = { id:string; productId?:string; name:string; normalizedName:string; brand?:string; category:Category; quantity:number; unit:string; size?:string; estimatedUnitPrice?:number; estimatedUnitPricePaise?:number; originalUnitPricePaise?:number; approximatePrice?:boolean; purchased:boolean; source:Source; createdAt:string; updatedAt:string };
 export type HistoryItem = Omit<ShoppingItem,"purchased"> & { purchasedAt:string };
 export type ParsedItem = { item:string; normalizedItem:string; productId?:string; quantity:number; unit:string; explicitQuantity:boolean };

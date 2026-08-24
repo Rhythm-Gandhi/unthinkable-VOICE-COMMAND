@@ -45,8 +45,25 @@ export const catalog:Product[]=[
   p("olive-oil","Olive oil","olive oil","Figaro","Cooking Essentials","1 L","bottle",799,32,["healthy"]),
   p("ice-cream","Ice cream","ice cream","Amul","Frozen","750 ml","tub",240,33,["dessert"]),
   p("green-tea","Green tea","green tea","Lipton","Beverages","25 bags","box",165,34,["healthy","sugar-free"]),
-  p("coconut-milk","Coconut milk","coconut milk","Dabur Hommade","Cooking Essentials","200 ml","can",85,35,["vegan","lactose-free"],{substituteIds:["sofit-almond"]})
+  p("coconut-milk","Coconut milk","coconut milk","Dabur Hommade","Cooking Essentials","200 ml","can",85,35,["vegan","lactose-free"],{substituteIds:["sofit-almond"]}),
+  p("almonds","Almonds","almond","Fresh Mills","Dry Fruits & Nuts","100 g","g",95,0,["healthy","protein"],{photoSheet:1,aliases:["almond","almonds","badam","badaam","बादाम","কাঠবাদাম","બદામ","ਬਦਾਮ","பாதாம்","బాదం","ಬಾದಾಮಿ","ബദാം","بادام"]}),
+  p("fox-nuts","Fox Nuts","fox nut","Fresh Mills","Dry Fruits & Nuts","100 g","g",110,1,["healthy","snack"],{photoSheet:1,aliases:["fox nut","fox nuts","makhana","makhane","मखाना","मखाने","মাখানা","મખાણા","ਮਖਾਣੇ","மக்கானா","మఖానా","ಮಖಾನಾ","മഖാന","مکھانے"]}),
+  p("cashews","Cashews","cashew","Fresh Mills","Dry Fruits & Nuts","100 g","g",105,2,["healthy","protein"],{photoSheet:1,aliases:["cashew","cashews","cashew nut","cashew nuts","kaju","kaaju","काजू","কাজু","કાજુ","ਕਾਜੂ","முந்திரி","జీడిపప్పు","ಗೋಡಂಬಿ","കശുവണ്ടി","کاجو"]}),
+  p("lemon","Lemon","lemon","Fresh","Produce","1 piece","piece",8,3,["fruit","vitamin-c"],{photoSheet:1,aliases:["lemon","lemons","nimbu","neembu","नींबू","निम्बू","लिंबू","লেবু","લીંબુ","ਨਿੰਬੂ","எலுமிச்சை","నిమ్మకాయ","ನಿಂಬೆ","നാരങ്ങ","لیموں"]}),
+  p("coconut","Coconut","coconut","Fresh","Produce","1 piece","piece",45,4,["fruit","fresh"],{photoSheet:1,aliases:["coconut","coconuts","nariyal","नारियल","नारळ","নারকেল","નાળિયેર","ਨਾਰੀਅਲ","தேங்காய்","కొబ్బరికాయ","ತೆಂಗಿನಕಾಯಿ","തേങ്ങ","ناریل"]}),
+  p("mint","Mint","mint","Fresh","Produce","1 bunch","bunch",20,5,["fresh","herb"],{photoSheet:1,aliases:["mint","pudina","पुदीना","পুদিনা","ફુદીનો","ਪੁਦੀਨਾ","புதினா","పుదీనా","ಪುದೀನಾ","പുതിന","پودینہ"]}),
+  p("ginger","Ginger","ginger","Fresh","Produce","100 g","g",30,6,["fresh","spice"],{photoSheet:1,aliases:["ginger","adrak","अदरक","आले","আদা","આદુ","ਅਦਰਕ","இஞ்சி","అల్లం","ಶುಂಠಿ","ഇഞ്ചി","ادرک"]}),
+  p("garlic","Garlic","garlic","Fresh","Produce","100 g","g",35,7,["fresh","spice"],{photoSheet:1,aliases:["garlic","lahsun","lehsun","लहसुन","लसूण","রসুন","લસણ","ਲਸਣ","பூண்டு","వెల్లుల్లి","ಬೆಳ್ಳುಳ್ಳಿ","വെളുത്തുള്ളി","لہسن"]}),
+  p("green-chilli","Green Chilli","green chilli","Fresh","Produce","100 g","g",20,8,["fresh","spice"],{photoSheet:1,aliases:["green chilli","green chillies","hari mirch","हरी मिर्च","हिरवी मिरची","কাঁচা মরিচ","લીલું મરચું","ਹਰੀ ਮਿਰਚ","பச்சை மிளகாய்","పచ్చి మిర్చి","ಹಸಿರು ಮೆಣಸಿನಕಾಯಿ","പച്ചമുളക്","ہری مرچ"]}),
+  p("raisins","Raisins","raisin","Fresh Mills","Dry Fruits & Nuts","100 g","g",45,9,["healthy"],{photoSheet:1,aliases:["raisin","raisins","kishmish","किशमिश"]}),
+  p("pistachios","Pistachios","pistachio","Fresh Mills","Dry Fruits & Nuts","100 g","g",140,10,["healthy","protein"],{photoSheet:1,aliases:["pistachio","pistachios","pista","पिस्ता"]}),
+  p("walnuts","Walnuts","walnut","Fresh Mills","Dry Fruits & Nuts","100 g","g",130,11,["healthy"],{photoSheet:1,aliases:["walnut","walnuts","akhrot","अखरोट"]}),
+  p("peanuts","Peanuts","peanut","Fresh Mills","Dry Fruits & Nuts","500 g","g",70,12,["protein"],{photoSheet:1,aliases:["peanut","peanuts","moongfali","mungfali","मूंगफली"]}),
+  p("dates","Dates","date","Fresh Mills","Dry Fruits & Nuts","500 g","g",140,13,["healthy"],{photoSheet:1,aliases:["date","dates","khajur","खजूर"]}),
+  p("sesame","Sesame Seeds","sesame","Fresh Mills","Spices","200 g","g",50,14,["seeds"],{photoSheet:1,aliases:["sesame","sesame seed","sesame seeds","til","तिल"]}),
+  p("cumin","Cumin Seeds","cumin","Fresh Mills","Spices","100 g","g",45,15,["seeds"],{photoSheet:1,aliases:["cumin","cumin seed","cumin seeds","jeera","जीरा"]}),
+  p("fenugreek","Fenugreek","fenugreek","Fresh","Produce","1 bunch","bunch",25,16,["fresh","herb"],{photoSheet:1,aliases:["fenugreek","methi","मेथी"]})
 ];
 
 const categoryMap:Record<string,Category>={atta:"Grains & Flours",maida:"Grains & Flours",besan:"Grains & Flours",rice:"Grains & Flours",bajra:"Grains & Flours",coriander:"Produce",milk:"Dairy",egg:"Dairy",bread:"Bakery",sugar:"Cooking Essentials",salt:"Cooking Essentials",apple:"Produce",banana:"Produce",orange:"Produce",mango:"Produce",tomato:"Produce",onion:"Produce",spinach:"Produce",potato:"Produce",water:"Beverages",toothpaste:"Personal Care",toothbrush:"Personal Care",chips:"Snacks","cooking oil":"Cooking Essentials"};
-export const categorize=(name:string):Category=>catalog.find(p=>p.normalizedName===name)?.category??categoryMap[name]??"Other";
+export const categorize=(name:string):Category=>catalog.find(p=>p.normalizedName===name)?.category??categoryMap[name]??"Other Food";
