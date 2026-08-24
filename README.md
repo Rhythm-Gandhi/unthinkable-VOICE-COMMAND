@@ -2,14 +2,16 @@
 
 VoiceCart is a mobile-first, local-first shopping assistant for English, Hindi, and Hinglish commands. It combines real browser speech recognition with the same deterministic parser used by its text fallback. No audio is recorded and no backend is required.
 
+**Live app:** [https://rhythm-gandhi.github.io/unthinkable-VOICE-COMMAND/](https://rhythm-gandhi.github.io/unthinkable-VOICE-COMMAND/)
+
 ## Features
 
 - Real Web Speech API input with permission, listening, processing, timeout, error, unsupported, and manual-stop states
 - English (`en-IN`), Hindi (`hi-IN`), and mixed Hinglish vocabulary
-- Shared deterministic parser for natural add, partial/whole removal, set quantity, quantity/list/total queries, search, recommendations, brand choice, price filters, and substitutes
+- Shared deterministic parser for natural add, partial/whole removal, set quantity, quantity/list/total queries, search, recommendations, price filters, and substitutes
 - Low-confidence confirmation with Confirm, Edit, Retry, and Cancel
 - Categorized shopping list, compatible duplicate merging, inline editing, purchase completion, totals, and undo
-- Local catalog search by product, brand, category, tags, size, price, and stock
+- Local catalog search by product, category, tags, size, price, and stock
 - Separate pantry, purchase history, and explainable history/low-stock/seasonal/sale suggestions
 - Responsive 320px layout, keyboard focus, semantic controls, reduced motion, and live feedback
 - Versioned `localStorage` recovery and an error boundary
@@ -63,7 +65,7 @@ npm run build
 - `100 rupaye ke andar toothpaste dikhao`
 - `Show Colgate toothpaste`
 - `Suggest an alternative to regular milk`
-- `Choose the second one` or `Choose Tata`
+- `Choose the second one`
 
 ## Deployment
 
@@ -97,6 +99,6 @@ src/
 
 I built VoiceCart as a static, local-first React application so the assessment’s core workflows remain usable without accounts, API keys, or a backend. Voice and typed commands share one deterministic TypeScript parser, preventing behavior drift and making multilingual intent handling directly testable. The parser preserves the original transcript, normalizes only internally, supports English/Hindi/Hinglish aliases and number words, and routes low-confidence input through an explicit confirmation step.
 
-Shopping list, pantry, history, dismissed suggestions, and preferences use versioned localStorage with corrupt-data fallback. A bundled Indian grocery catalog powers brand, size, attribute, price, stock, sale, seasonality, and substitute behavior; the interface clearly labels those values as sample data. Suggestions are explainable rules based on pantry state, repeat history, seasonal metadata, or explicit sale flags—never random or presented as AI.
+Shopping list, pantry, history, dismissed suggestions, and preferences use versioned localStorage with corrupt-data fallback. A bundled Indian grocery catalog powers product, size, attribute, price, stock, sale, seasonality, and substitute behavior; the interface clearly labels those values as sample data. Suggestions are explainable rules based on pantry state, repeat history, seasonal metadata, or explicit sale flags—never random or presented as AI.
 
 The UI is mobile-first and keyboard-accessible, with responsive navigation, large controls, visible focus, live status messaging, and reduced-motion support. Native Web Speech and Speech Synthesis APIs keep dependencies minimal, while the text path ensures the app still works when microphone permission or browser support is unavailable.
