@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { catalog, categorize } from "./data";
-import { applyCartCommand, defaultData, isParsedCommand, itemSubtotalPaise, loadData, makeItem, mergeItem, normalizeItem, normalizeTranscript, parseCommand, parseItems, rankSubstitutes, recommendProducts, serializeData, suggestions } from "./domain";
+import { applyCartCommand, defaultData, isParsedCommand, itemSubtotalPaise, loadData, makeItem, mergeItem, normalizeItem, normalizeTranscript, parseCommand, parseItems, rankSubstitutes, recommendProducts, searchProducts, serializeData, suggestions } from "./domain";
 import { chooseBestTranscript, evaluateAlternatives, shouldExecuteFinal } from "./voice";
 import type { AppData, HistoryItem } from "./types";
 
@@ -15,7 +15,7 @@ describe("shared transcript normalization",()=>{
 
 describe("intent parsing",()=>{
   it.each([["Add milk","ADD_ITEM","milk",1],["I want to buy bananas","ADD_ITEM","banana",1],["Doodh add karo","ADD_ITEM","milk",1],["Do packet doodh chahiye","ADD_ITEM","milk",2],["Add 2 bottles of water","ADD_ITEM","water",2],["Add five eggs","ADD_ITEM","egg",5],["Remove milk","REMOVE_ALL","milk",1],["Remove two packets of milk","REMOVE_QUANTITY","milk",2],["Change water to 4 bottles","SET_QUANTITY","water",4],["I only need three milk packets","SET_QUANTITY","milk",3],["How much milk do I have?","QUERY_QUANTITY","milk",1],["Tell me my entire list","QUERY_LIST",undefined,1],["I need one kilo atta","ADD_ITEM","atta",1],["atta chahiye ek kilo","ADD_ITEM","atta",1]])("parses %s",(text,intent,item,quantity)=>{const p=parseCommand(String(text));expect(p.intent).toBe(intent);expect(p.normalizedItem).toBe(item);expect(p.quantity??1).toBe(quantity)});
-  it("uses one product per name and keeps price limits",()=>{const parsed=parseCommand("Show Colgate toothpaste");expect(parsed).toMatchObject({intent:"SEARCH_PRODUCT",normalizedItem:"toothpaste"});expect(parsed).not.toHaveProperty("brand");expect(new Set(catalog.map(p=>p.normalizedName)).size).toBe(catalog.length);expect(parseCommand("100 rupaye ke andar toothpaste dikhao")).toMatchObject({intent:"SEARCH_PRODUCT",maxPrice:100})});
+  it("keeps catalog variants and price limits",()=>{const parsed=parseCommand("Show Colgate toothpaste");expect(parsed).toMatchObject({intent:"SEARCH_PRODUCT",normalizedItem:"toothpaste",brand:"Colgate"});expect(catalog.filter(p=>p.normalizedName==="toothpaste").length).toBeGreaterThan(1);expect(parseCommand("100 rupaye ke andar toothpaste dikhao")).toMatchObject({intent:"SEARCH_PRODUCT",maxPrice:100})});
   it("keeps recommendations out of add",()=>expect(parseCommand("Recommend me what to buy in fruits").intent).toBe("RECOMMEND_PRODUCTS"));
   it("supports recommendation follow-up selection",()=>expect(parseCommand("Add the first one")).toMatchObject({intent:"CHOOSE_PRODUCT",selectionIndex:0}));
   it("routes substitute recommendations before generic recommendations",()=>expect(parseCommand("Suggest something instead of butter")).toMatchObject({intent:"SHOW_SUBSTITUTES",normalizedItem:"butter"}));
@@ -95,6 +95,28 @@ describe("existing domain and persistence behavior",()=>{
   it("recommends within constraints",()=>expect(recommendProducts(parseCommand("Recommend fruits under ₹200")).every(x=>x.price<=200&&x.tags.includes("fruit"))).toBe(true));
   it("builds history and seasonal suggestions",()=>{const h={...makeItem("bread"),purchasedAt:new Date().toISOString()} as HistoryItem;expect(suggestions({...defaultData,history:[h,{...h,id:crypto.randomUUID()}]}).some(x=>x.kind==="history")).toBe(true);expect(suggestions(defaultData,5).some(x=>x.kind==="seasonal")).toBe(true)});
   it("ranks in-stock substitutes",()=>expect(rankSubstitutes(catalog.find(p=>p.id==="mother-milk")!)[0].id).toBe("sofit-almond"));
-  it("migrates old saved units and prices without legacy brands",()=>{const item={...makeItem("milk"),brand:"Old brand",unit:"litre",estimatedUnitPricePaise:undefined,estimatedUnitPrice:56},data={...defaultData,list:[item]} as AppData,loaded=loadData(serializeData(data)).list[0];expect(loaded).toMatchObject({unit:"l",estimatedUnitPricePaise:5600});expect(loaded).not.toHaveProperty("brand")});
+  it("migrates old saved units, prices, and catalog identity",()=>{const item={...makeItem("milk"),brand:"Old brand",unit:"litre",estimatedUnitPricePaise:undefined,estimatedUnitPrice:56},data={...defaultData,list:[item]} as AppData,loaded=loadData(serializeData(data)).list[0];expect(loaded).toMatchObject({unit:"l",estimatedUnitPricePaise:5600,brand:"Mother Dairy"})});
   it("recovers corrupt persistence",()=>expect(loadData("broken")).toEqual(defaultData));
+});
+
+describe("completed multilingual catalog requirements",()=>{
+  it.each([
+    ["Buy five pieces of oranges",5],["Buy five oranges",5],["Add five piece orange",5],["Paanch santre chahiye",5],["पाँच संतरे चाहिए",5],
+    ["Buy ५ oranges",5],["Buy ৫ oranges",5],["Buy ૫ oranges",5],["Buy ੫ oranges",5],["Buy ௫ oranges",5],["Buy ౫ oranges",5],["Buy ೫ oranges",5],["Buy ൫ oranges",5],["Buy ۵ oranges",5]
+  ])("counts %s",(text,quantity)=>expect(parseCommand(text)).toMatchObject({intent:"ADD_ITEM",normalizedItem:"orange",quantity}));
+
+  it.each([
+    ["Find toothpaste under Rs 100",undefined,100],["Find toothpaste under Rs. 100",undefined,100],["Find toothpaste below ₹100",undefined,100],["Show toothpaste less than 100 rupees",undefined,100],["100 rupaye ke andar toothpaste dikhao",undefined,100],["₹50 se ₹100 ke beech toothpaste dikhao",50,100],["Find toothpaste under INR 100",undefined,100]
+  ])("normalizes INR range in %s",(text,minPrice,maxPrice)=>{const command=parseCommand(text);expect(command).toMatchObject({intent:"SEARCH_PRODUCT",normalizedItem:"toothpaste",maxPrice});expect(command.minPrice).toBe(minPrice);expect(searchProducts(command).every(p=>p.price<=(maxPrice??Infinity)&&p.price>=(minPrice??0))).toBe(true)});
+
+  it.each(["What is the cost of toothbrush?","How much does a toothbrush cost?","What is the price of Colgate toothbrush?","Toothbrush kitne ka hai?","टूथब्रश कितने का है?"])("routes price query: %s",text=>{const list=[makeItem("Milk")],before=serializeData({...defaultData,list}),command=parseCommand(text);expect(command.intent).toBe("PRICE_QUERY");expect(catalog.filter(p=>p.normalizedName===command.normalizedItem).length).toBeGreaterThan(1);expect(serializeData({...defaultData,list})).toBe(before)});
+
+  it.each([["flour","atta"],["atta","atta"],["whole wheat flour","atta"],["all-purpose flour","maida"],["maida","maida"],["besan","besan"]])("maps %s to %s",(value,expected)=>expect(normalizeItem(value)).toBe(expected));
+  it("keeps flour taxonomy canonical and distinct",()=>{for(const name of ["atta","maida","besan"])expect(catalog.filter(p=>p.normalizedName===name).every(p=>p.category==="Grains & Flours")).toBe(true);const atta=makeItem("flour",1,"kg"),merged=mergeItem([atta],makeItem("atta",2,"kg"));expect(merged).toHaveLength(1);expect(merged[0].quantity).toBe(3);expect(mergeItem(merged,makeItem("maida",1,"kg"))).toHaveLength(2)});
+
+  it.each(["Find me dhaniya","Show coriander","Dhaniya dikhao","धनिया दिखाओ"])("searches dhaniya without mutation: %s",text=>{const command=parseCommand(text),results=searchProducts(command);expect(command).toMatchObject({intent:"SEARCH_PRODUCT",normalizedItem:"coriander"});expect(results).toHaveLength(3);expect(results.map(p=>p.category)).toEqual(expect.arrayContaining(["Produce","Spices"]));expect(results.map(p=>p.name)).toEqual(expect.arrayContaining(["Fresh coriander leaves","Coriander seeds","Coriander powder"]))});
+
+  it("migrates legacy Pantry products once and merges compatible duplicates",()=>{const list=makeItem("Milk",2,"packet"),pantry={...makeItem("doodh",3,"packet"),lowStock:true};delete pantry.productId;const legacy=JSON.stringify({version:1,list:[list],pantry:[pantry],history:[],dismissed:[],activity:[],speechEnabled:false}),loaded=loadData(legacy);expect(loaded).toMatchObject({version:2,migrationVersion:2});expect(loaded.list).toHaveLength(1);expect(loaded.list[0].quantity).toBe(5);expect(loadData(serializeData(loaded)).list[0].quantity).toBe(5);expect(serializeData(loaded)).not.toContain("pantry")});
+  it("contains no Pantry category and every product has a reusable photo coordinate",()=>{expect(catalog.some(p=>String(p.category).toLowerCase()==="pantry")).toBe(false);expect(catalog.every(p=>Number.isInteger(p.photoIndex)&&p.photoIndex>=0&&p.photoIndex<36)).toBe(true)});
+  it.each(["Is milk good for children?","Tell me a joke","Maybe later"])("keeps unknown text read-only: %s",text=>expect(parseCommand(text).intent).toBe("UNKNOWN"));
 });

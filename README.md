@@ -12,12 +12,14 @@ VoiceCart is a mobile-first, local-first shopping assistant for English, Hindi, 
 - Low-confidence confirmation with Confirm, Edit, Retry, and Cancel
 - Categorized shopping list, compatible duplicate merging, inline editing, purchase completion, totals, and undo
 - Local catalog search by product, category, tags, size, price, and stock
-- Separate pantry, purchase history, and explainable history/low-stock/seasonal/sale suggestions
+- Purchase history and explainable history/seasonal/sale suggestions
 - Responsive 320px layout, keyboard focus, semantic controls, reduced motion, and live feedback
 - Versioned `localStorage` recovery and an error boundary
 - Multi-product commands, canonical `kg`/`g`/`l`/packet measurements, multilingual product IDs and aliases, short-lived follow-up context, and recommendation routing that never mutates the cart
 - Integer-paise cart pricing with item subtotals, estimated savings, stable totals, and category fallback estimates
 - Auto detect plus manual locales for English, Hindi/Hinglish, Bengali, Marathi, Gujarati, Punjabi, Tamil, Telugu, Kannada, Malayalam, and Urdu grocery vocabulary
+- Data-driven native digits, number words, fractions, currency ranges, canonical flour/coriander taxonomy, and brand/size catalog variants
+- Compact local WebP product-photo sprite with descriptive lazy-loaded images and an accessible failure fallback
 - Native share/clipboard, PNG list export, print/PDF output, and persisted light/dark themes
 
 Catalog prices, sale flags, stock, and seasonal metadata are bundled sample data, not live retailer information. Suggestions are rule-based; speech recognition is browser-powered.
@@ -66,14 +68,18 @@ npm run build
 - `Show Colgate toothpaste`
 - `Suggest an alternative to regular milk`
 - `Choose the second one`
+- `Buy five pieces of oranges`
+- `What is the cost of toothbrush?`
+- `₹50 se ₹100 ke beech toothpaste dikhao`
+- `Find me dhaniya`
 
 ## Deployment
 
-Run `npm run build` and deploy `dist/` to Vercel, Netlify, Firebase Hosting, or another static host. Vite uses relative application imports and no client-side router, so refreshes work without rewrite rules. Serve over HTTPS for microphone access. No secret or environment variable is needed.
+Pushes to `main` run the official GitHub Pages workflow in `.github/workflows/deploy-pages.yml`. It verifies tests, lint, types, and the production build, then uploads the ignored `dist/` output as a Pages artifact. Vite uses the repository base path and no client-side router. HTTPS supports microphone access; no secret or environment variable is needed.
 
 ## Browser compatibility and privacy
 
-Chromium-based browsers offer the best Speech Recognition support. Safari/Firefox support varies; the complete text-command path remains available. The Web Speech API cannot reliably identify an unknown spoken language before transcription: **Auto detect** starts recognition with the browser/device locale, then performs transcript-level language detection and multilingual normalization. For better recognition, select the intended language locale explicitly. Recognition may use the browser vendor’s speech service. VoiceCart does not store audio. Lists, pantry, history, preferences, and a short recent transcript log remain only in this browser’s `localStorage` until cleared.
+Chromium-based browsers offer the best Speech Recognition support. Safari/Firefox support varies; the complete text-command path remains available. The Web Speech API cannot reliably identify an unknown spoken language before transcription: **Auto detect** starts recognition with the browser/device locale, then performs transcript-level language detection and multilingual normalization. For better recognition, select the intended language locale explicitly. Recognition may use the browser vendor’s speech service. VoiceCart does not store audio. Lists, history, preferences, and a short recent transcript log remain only in this browser’s `localStorage` until cleared.
 
 ## Known limitations
 
@@ -99,6 +105,6 @@ src/
 
 I built VoiceCart as a static, local-first React application so the assessment’s core workflows remain usable without accounts, API keys, or a backend. Voice and typed commands share one deterministic TypeScript parser, preventing behavior drift and making multilingual intent handling directly testable. The parser preserves the original transcript, normalizes only internally, supports English/Hindi/Hinglish aliases and number words, and routes low-confidence input through an explicit confirmation step.
 
-Shopping list, pantry, history, dismissed suggestions, and preferences use versioned localStorage with corrupt-data fallback. A bundled Indian grocery catalog powers product, size, attribute, price, stock, sale, seasonality, and substitute behavior; the interface clearly labels those values as sample data. Suggestions are explainable rules based on pantry state, repeat history, seasonal metadata, or explicit sale flags—never random or presented as AI.
+Shopping list, history, dismissed suggestions, and preferences use versioned localStorage with corrupt-data fallback. Version 2 migrates any legacy Pantry products into the shopping list once, merging compatible duplicates without discarding quantities or price data. A bundled Indian grocery catalog powers product, brand, size, attribute, price, stock, sale, seasonality, and substitute behavior; the interface clearly labels those values as sample data. Suggestions are explainable rules based on repeat history, seasonal metadata, or explicit sale flags—never random or presented as AI.
 
 The UI is mobile-first and keyboard-accessible, with responsive navigation, large controls, visible focus, live status messaging, and reduced-motion support. Native Web Speech and Speech Synthesis APIs keep dependencies minimal, while the text path ensures the app still works when microphone permission or browser support is unavailable.
